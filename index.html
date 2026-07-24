@@ -314,7 +314,7 @@ function buildRow(p, tabIdx, rowIdx, showComp) {
     : '';
 
   return '<div class="persona-row" data-search="'+search+'" data-tab="'+tabIdx+'" data-idx="'+rowIdx+'" id="row-'+uid+'">' +
-    '<div class="persona-header" onclick="toggleRow(\''+uid+'\')">' +
+    '<div class="persona-header" onclick="toggleRow(\''+uid+'\',event)">' +
       '<div class="avatar" style="background:linear-gradient(135deg,'+t.color+','+t.color+'cc)">'+initials(p.nombre,p.apellido)+'</div>' +
       '<div class="persona-info">' +
         '<div class="persona-nombre">'+p.nombre+' '+p.apellido+'</div>' +
@@ -342,12 +342,16 @@ function buildRow(p, tabIdx, rowIdx, showComp) {
   '</div>';
 }
 
-function toggleRow(uid) {
-  var header = document.querySelector("#row-"+uid+" .persona-header");
-  var detail = document.getElementById("detail-"+uid);
+function toggleRow(uid, e) {
+  if (e) e.stopPropagation();
+  // buscar dentro del panel activo únicamente
+  var activePanel = document.querySelector(".tab-panel.active");
+  var header = activePanel.querySelector("#row-"+uid+" .persona-header");
+  var detail = activePanel.querySelector("#detail-"+uid);
+  if (!header || !detail) return;
   var isOpen = header.classList.contains("open");
-  document.querySelectorAll(".persona-header.open").forEach(function(h){ h.classList.remove("open"); });
-  document.querySelectorAll(".persona-detail.open").forEach(function(d){ d.classList.remove("open"); });
+  activePanel.querySelectorAll(".persona-header.open").forEach(function(h){ h.classList.remove("open"); });
+  activePanel.querySelectorAll(".persona-detail.open").forEach(function(d){ d.classList.remove("open"); });
   if (!isOpen) { header.classList.add("open"); detail.classList.add("open"); }
 }
 
