@@ -149,14 +149,36 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <span class="topbar-badge" id="totalBadge">Cargando...</span>
 </div>
 
-<div class="tabs-wrap" id="tabsWrap"></div>
-
-<div class="app">
-  <div class="search-wrap">
-    <span class="search-icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="Buscar en todas las competencias..." oninput="onSearch()">
+<!-- PANTALLA INICIO -->
+<div id="homeScreen">
+  <div style="max-width:860px;margin:0 auto;padding:32px 20px;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <img src="https://lh3.googleusercontent.com/d/1I3YBloH6K8NXA6J-wbdEXPnlBpkFofe9"
+           alt="Dimayor" style="height:52px;width:auto;margin-bottom:14px;" onerror="this.style.display='none'">
+      <div style="font-size:20px;font-weight:700;color:var(--text);">Jefes de Prensa</div>
+      <div style="font-size:14px;color:var(--muted);margin-top:4px;">Selecciona una competencia para ver el directorio</div>
+    </div>
+    <div id="homeGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;"></div>
   </div>
-  <div id="panelsWrap"></div>
+</div>
+
+<!-- DIRECTORIO -->
+<div id="dirScreen" style="display:none;">
+  <div class="tabs-wrap" id="tabsWrap"></div>
+  <div class="app">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <button onclick="goHome()" style="display:inline-flex;align-items:center;gap:5px;padding:7px 14px;
+        border-radius:999px;font-size:12px;font-weight:600;font-family:inherit;
+        border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;flex-shrink:0;">
+        ← Inicio
+      </button>
+      <div class="search-wrap" style="flex:1;margin-bottom:0;">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Buscar en todas las competencias..." oninput="onSearch()">
+      </div>
+    </div>
+    <div id="panelsWrap"></div>
+  </div>
 </div>
 
 <script>
@@ -172,6 +194,36 @@ var TABS = [
 var DATA = TABS.map(function(){ return []; });
 var currentTab = -1; // -1 = "Todos" (solo cuando hay búsqueda activa)
 var activeTab  = 0;
+
+/* ── HOME ── */
+function renderHome() {
+  var grid = document.getElementById("homeGrid");
+  grid.innerHTML = TABS.map(function(t, i) {
+    return '<div onclick="goToTab('+i+')" style="cursor:pointer;background:var(--card);border:1px solid var(--line);' +
+      'border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .2s,transform .2s;"' +
+      'onmouseover="this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'var(--shadow)\'"' +
+      'onmouseout="this.style.transform=\'\';this.style.boxShadow=\'var(--shadow-sm)\'">' +
+        '<div style="height:6px;background:'+t.color+';"></div>' +
+        '<div style="padding:24px 16px;text-align:center;">' +
+          '<img src="'+t.logo+'" style="height:72px;width:auto;object-fit:contain;margin-bottom:14px;" onerror="this.style.display=\'none\'">' +
+          '<div style="font-size:13px;font-weight:700;color:var(--text);line-height:1.3;">'+t.label+'</div>' +
+          '<div style="font-size:11px;color:var(--muted);margin-top:4px;" id="home-count-'+i+'">Cargando...</div>' +
+        '</div>' +
+      '</div>';
+  }).join("");
+}
+
+function goToTab(idx) {
+  document.getElementById("homeScreen").style.display = "none";
+  document.getElementById("dirScreen").style.display  = "block";
+  switchTab(idx);
+}
+
+function goHome() {
+  document.getElementById("homeScreen").style.display = "block";
+  document.getElementById("dirScreen").style.display  = "none";
+  document.getElementById("searchInput").value = "";
+}
 
 /* ── INIT TABS Y PANELES ── */
 function initUI() {
@@ -366,6 +418,8 @@ function renderLista(tabIdx) {
   lista.style.display = "block";
   empty.style.display = "none";
   document.getElementById("count-"+tabIdx).textContent = data.length;
+  var hc = document.getElementById("home-count-"+tabIdx);
+  if (hc) hc.textContent = data.length + " registros";
   updateBadge();
 }
 
@@ -431,6 +485,7 @@ function updateBadge() {
 }
 
 /* ── FETCH ── */
+renderHome();
 initUI();
 TABS.forEach(function(tab, idx) {
   fetch("https://docs.google.com/spreadsheets/d/e/"+SHEET_ID+"/pub?gid="+tab.gid+"&single=true&output=csv")
