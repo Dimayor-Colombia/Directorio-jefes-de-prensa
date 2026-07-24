@@ -29,20 +29,27 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   padding:5px 13px;border-radius:999px;font-size:12px;font-weight:600;}
 
 /* TABS */
-.tabs-wrap{background:var(--card);border-bottom:1px solid var(--line);padding:0 16px;
+.tabs-wrap{background:var(--card);border-bottom:1px solid var(--line);padding:0 8px;
   display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
 .tabs-wrap::-webkit-scrollbar{display:none;}
-.tab-btn{padding:13px 16px;font-size:12px;font-weight:600;font-family:inherit;background:none;
+.tab-btn{padding:10px 14px;font-size:12px;font-weight:600;font-family:inherit;background:none;
   border:none;border-bottom:3px solid transparent;color:var(--muted);cursor:pointer;
-  transition:all .18s;display:flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0;}
+  transition:all .18s;display:flex;align-items:center;gap:7px;white-space:nowrap;flex-shrink:0;}
 .tab-btn:hover{color:var(--primary);}
-.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);}
-.tab-count{background:var(--soft-blue);color:var(--primary);font-size:11px;font-weight:700;
-  padding:2px 7px;border-radius:999px;}
-.tab-btn.active .tab-count{background:var(--primary);color:#fff;}
+.tab-btn.active{border-bottom-color:var(--tab-color, var(--primary));color:var(--text);}
+.tab-logo{height:22px;width:auto;object-fit:contain;}
+.tab-count{font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;
+  background:var(--soft-blue);color:var(--primary);}
+.tab-btn.active .tab-count{color:#fff;background:var(--tab-color, var(--primary));}
+
+/* Pestaña especial "Todos" */
+.tab-btn.tab-all{color:var(--muted);}
+.tab-btn.tab-all.active{color:var(--primary);border-bottom-color:var(--primary);}
+.tab-btn.tab-all.active .tab-count{background:var(--primary);color:#fff;}
 
 .app{max-width:860px;margin:0 auto;padding:24px 20px 40px;}
 
+/* SEARCH */
 .search-wrap{position:relative;margin-bottom:20px;}
 .search-wrap input{width:100%;border:1px solid var(--line);border-radius:999px;
   padding:11px 18px 11px 42px;font-size:13px;font-family:inherit;color:var(--text);
@@ -51,6 +58,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .search-wrap input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,76,153,0.10);}
 .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none;}
 
+/* LISTA */
 .lista{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
   box-shadow:var(--shadow-sm);overflow:hidden;}
 .persona-row{border-bottom:1px solid #f1f5f9;}
@@ -62,14 +70,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .persona-header.open{background:var(--soft-blue);}
 
 .avatar{width:42px;height:42px;border-radius:999px;flex-shrink:0;
-  background:linear-gradient(135deg,var(--primary),var(--primary-light));
   display:flex;align-items:center;justify-content:center;
   font-size:15px;font-weight:700;color:#fff;}
 
 .persona-info{flex:1;min-width:0;}
-.persona-nombre{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px;}
-.club-tag{display:inline-flex;align-items:center;gap:4px;background:var(--soft-blue);
-  color:var(--primary);font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;}
+.persona-nombre{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.persona-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.club-tag{display:inline-flex;align-items:center;gap:4px;background:#f1f5f9;
+  color:var(--text);font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;}
+.comp-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;
+  padding:2px 8px;border-radius:4px;color:#fff;}
 
 .chevron{font-size:11px;color:var(--muted);transition:transform .25s;flex-shrink:0;}
 .persona-header.open .chevron{transform:rotate(180deg);}
@@ -98,6 +108,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   font-family:inherit;border:1px solid #bfdbfe;background:var(--soft-blue);
   color:var(--primary);cursor:pointer;transition:all .18s;}
 .btn-share-contact:hover{background:#dbeafe;}
+
+/* HEADER DE COMPETENCIA en lista "Todos" */
+.comp-header{display:flex;align-items:center;gap:10px;padding:10px 18px;
+  border-bottom:1px solid var(--line);}
+.comp-header-logo{height:28px;width:auto;}
+.comp-header-name{font-size:12px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.4px;}
 
 .tab-panel{display:none;}
 .tab-panel.active{display:block;}
@@ -133,57 +149,93 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <span class="topbar-badge" id="totalBadge">Cargando...</span>
 </div>
 
-<div class="tabs-wrap">
-  <button class="tab-btn active" onclick="switchTab(0)">⚽ Liga Betplay<span class="tab-count" id="count-0">—</span></button>
-  <button class="tab-btn" onclick="switchTab(1)">🏆 Torneo Betplay<span class="tab-count" id="count-1">—</span></button>
-  <button class="tab-btn" onclick="switchTab(2)">👩 Liga Femenina<span class="tab-count" id="count-2">—</span></button>
-  <button class="tab-btn" onclick="switchTab(3)">🥇 Copa Betplay<span class="tab-count" id="count-3">—</span></button>
-</div>
+<div class="tabs-wrap" id="tabsWrap"></div>
 
 <div class="app">
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="Buscar por nombre, club, correo..." oninput="filterRows()">
+    <input type="text" id="searchInput" placeholder="Buscar en todas las competencias..." oninput="onSearch()">
   </div>
-
-  <div class="tab-panel active" id="panel-0">
-    <div class="loading" id="loading-0"><div class="loading-spinner"></div>Cargando...</div>
-    <div class="lista" id="lista-0" style="display:none;"></div>
-    <div class="empty" id="empty-0" style="display:none;"><div class="empty-icon">🔎</div>Sin resultados</div>
-  </div>
-  <div class="tab-panel" id="panel-1">
-    <div class="loading" id="loading-1"><div class="loading-spinner"></div>Cargando...</div>
-    <div class="lista" id="lista-1" style="display:none;"></div>
-    <div class="empty" id="empty-1" style="display:none;"><div class="empty-icon">🔎</div>Sin resultados</div>
-  </div>
-  <div class="tab-panel" id="panel-2">
-    <div class="loading" id="loading-2"><div class="loading-spinner"></div>Cargando...</div>
-    <div class="lista" id="lista-2" style="display:none;"></div>
-    <div class="empty" id="empty-2" style="display:none;"><div class="empty-icon">🔎</div>Sin resultados</div>
-  </div>
-  <div class="tab-panel" id="panel-3">
-    <div class="loading" id="loading-3"><div class="loading-spinner"></div>Cargando...</div>
-    <div class="lista" id="lista-3" style="display:none;"></div>
-    <div class="empty" id="empty-3" style="display:none;"><div class="empty-icon">🔎</div>Sin resultados</div>
-  </div>
+  <div id="panelsWrap"></div>
 </div>
 
 <script>
 var SHEET_ID = "2PACX-1vTSNpCjdPAgvGEWakf6yDTIc9O4p_Wp61D6PreK_ysqHsg4ZTwtC10oaGcB5qz2cIwxzdnReWCNzq62";
+
 var TABS = [
-  { gid: "0",          nombre: "Liga Betplay Dimayor" },
-  { gid: "1874148603", nombre: "Torneo Betplay Dimayor" },
-  { gid: "916820782",  nombre: "Liga Femenina Betplay Dimayor" },
-  { gid: "950474651",  nombre: "Copa Betplay Dimayor" }
+  { gid:"0",          label:"Liga BetPlay",     color:"#f3cc23", logo:"https://lh3.googleusercontent.com/d/1tVCRbR0BNTcSqzoDd0jgs_9dvrvYK2pX" },
+  { gid:"1874148603", label:"Torneo BetPlay",   color:"#6fb2e3", logo:"https://lh3.googleusercontent.com/d/1t64NZwLCkCo4ofMZVYzhfcV8pSsVwCfv" },
+  { gid:"916820782",  label:"Liga Femenina",    color:"#b51a65", logo:"https://lh3.googleusercontent.com/d/1GRGoELSTVM2sDydzsswzi6XvjCDxK84y" },
+  { gid:"950474651",  label:"Copa BetPlay",     color:"#3bad4c", logo:"https://lh3.googleusercontent.com/d/1TELaujxqcd_Q_I3HwUxriPuUuwOx2Wrl" }
 ];
 
-var DATA = [[],[],[],[]];
-var currentTab = 0;
+var DATA = TABS.map(function(){ return []; });
+var currentTab = -1; // -1 = "Todos" (solo cuando hay búsqueda activa)
+var activeTab  = 0;
 
-function csvUrl(gid) {
-  return "https://docs.google.com/spreadsheets/d/e/" + SHEET_ID + "/pub?gid=" + gid + "&single=true&output=csv";
+/* ── INIT TABS Y PANELES ── */
+function initUI() {
+  var tabsWrap  = document.getElementById("tabsWrap");
+  var panelsWrap = document.getElementById("panelsWrap");
+
+  // Pestaña "Todos"
+  tabsWrap.innerHTML =
+    '<button class="tab-btn tab-all" id="tab-all" onclick="switchTab(-1)">🔍 Todos <span class="tab-count" id="count-all">—</span></button>';
+
+  TABS.forEach(function(t, i) {
+    tabsWrap.innerHTML +=
+      '<button class="tab-btn" id="tab-'+i+'" style="--tab-color:'+t.color+'" onclick="switchTab('+i+')">' +
+        '<img class="tab-logo" src="'+t.logo+'" onerror="this.style.display=\'none\'">' +
+        t.label +
+        '<span class="tab-count" id="count-'+i+'">—</span>' +
+      '</button>';
+
+    panelsWrap.innerHTML +=
+      '<div class="tab-panel" id="panel-'+i+'">' +
+        // Logo grande arriba
+        '<div style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);' +
+             'border-radius:14px;padding:14px 20px;margin-bottom:16px;box-shadow:var(--shadow-sm);">' +
+          '<img src="'+t.logo+'" style="height:48px;width:auto;" onerror="this.style.display=\'none\'">' +
+          '<div>' +
+            '<div style="font-size:15px;font-weight:700;color:var(--text);">'+t.label+'</div>' +
+            '<div style="font-size:12px;color:var(--muted);">Jefes de Prensa</div>' +
+          '</div>' +
+          '<div style="margin-left:auto;width:5px;height:48px;border-radius:3px;background:'+t.color+';"></div>' +
+        '</div>' +
+        '<div class="loading" id="loading-'+i+'"><div class="loading-spinner"></div>Cargando...</div>' +
+        '<div class="lista" id="lista-'+i+'" style="display:none;"></div>' +
+        '<div class="empty" id="empty-'+i+'" style="display:none;"><div class="empty-icon">🔎</div>Sin resultados</div>' +
+      '</div>';
+  });
+
+  // Panel "Todos" (búsqueda global)
+  panelsWrap.innerHTML +=
+    '<div class="tab-panel" id="panel-all">' +
+      '<div class="lista" id="lista-all" style="display:none;"></div>' +
+      '<div class="empty" id="empty-all" style="display:none;"><div class="empty-icon">🔎</div>Sin resultados</div>' +
+    '</div>';
+
+  switchTab(0);
 }
 
+/* ── SWITCH TAB ── */
+function switchTab(idx) {
+  activeTab = idx;
+  document.querySelectorAll(".tab-btn").forEach(function(b){ b.classList.remove("active"); });
+  document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.remove("active"); });
+
+  if (idx === -1) {
+    document.getElementById("tab-all").classList.add("active");
+    document.getElementById("panel-all").classList.add("active");
+  } else {
+    document.getElementById("tab-"+idx).classList.add("active");
+    document.getElementById("panel-"+idx).classList.add("active");
+  }
+  document.getElementById("searchInput").value = "";
+  if (idx === -1) renderAll("");
+}
+
+/* ── PARSE CSV ── */
 function parseCSV(text) {
   var lines = text.trim().split("\n");
   if (lines.length < 2) return [];
@@ -216,139 +268,168 @@ function mapRow(row) {
     club:     row["Club"] || "",
     nombre:   row["Nombre"] || "",
     apellido: row["Apellido"] || "",
-    tel:      (row["Número de Celular"] || row["Numero de Celular"] || "").replace(/\s/g,""),
-    correo:   row["Correo electrónico"] || row["Correo electronico"] || row["Correo"] || ""
+    tel:      (row["Número de Celular"]||row["Numero de Celular"]||"").replace(/\s/g,""),
+    correo:   row["Correo electrónico"]||row["Correo electronico"]||row["Correo"]||""
   };
 }
 
 function initials(nombre, apellido) {
-  var n = (nombre||"").trim();
-  var a = (apellido||"").trim();
-  if (!n) return "?";
-  return (n[0] + (a ? a[0] : "")).toUpperCase();
+  var n=(nombre||"").trim(), a=(apellido||"").trim();
+  if(!n) return "?";
+  return (n[0]+(a?a[0]:"")).toUpperCase();
 }
 
-/* ── COMPARTIR CONTACTO — texto plano, sin JSON en el HTML ── */
-function compartirContacto(idx, e) {
-  if (e) e.stopPropagation();
-  // buscar la fila más cercana al botón
-  var btn = e.target;
-  var row = btn.closest ? btn.closest(".persona-row") : null;
+/* ── COMPARTIR ── */
+function compartirContacto(e) {
+  e.stopPropagation();
+  var row = e.target.closest(".persona-row");
   if (!row) return;
-  var tabData = DATA[currentTab];
-  var rowIdx  = parseInt(row.getAttribute("data-idx"), 10);
-  var p = tabData[rowIdx];
+  var tabIdx  = parseInt(row.getAttribute("data-tab"),  10);
+  var rowIdx  = parseInt(row.getAttribute("data-idx"),  10);
+  var p = DATA[tabIdx][rowIdx];
   if (!p) return;
-  var texto = "👤 " + p.nombre + " " + p.apellido + "\n" +
-              "🏟️ " + p.club + "\n" +
-              (p.tel    ? "📞 " + p.tel    + "\n" : "") +
-              (p.correo ? "✉️ " + p.correo        : "");
+  var texto = "👤 "+p.nombre+" "+p.apellido+"\n🏟️ "+p.club+
+    (p.tel    ? "\n📞 "+p.tel    : "")+
+    (p.correo ? "\n✉️ "+p.correo : "");
   if (navigator.share) {
-    navigator.share({ title: p.nombre + " " + p.apellido, text: texto });
+    navigator.share({ title: p.nombre+" "+p.apellido, text: texto });
   } else {
     navigator.clipboard.writeText(texto).then(function(){
-      alert("✅ Contacto copiado:\n\n" + texto);
-    }).catch(function(){
-      alert(texto);
-    });
+      alert("✅ Contacto copiado:\n\n"+texto);
+    }).catch(function(){ alert(texto); });
   }
 }
 
-function buildRow(p, idx) {
+/* ── BUILD ROW ── */
+function buildRow(p, tabIdx, rowIdx, showComp) {
   var tel   = p.tel.replace(/\D/g,"");
-  var wpUrl = tel ? "https://wa.me/" + tel : "";
-  var tgUrl = tel ? "https://t.me/+" + tel : "";
-  var searchStr = (p.nombre+" "+p.apellido+" "+p.club+" "+p.correo+" "+p.tel).toLowerCase();
-  var id = "p-" + currentTab + "-" + idx;
+  var wpUrl = tel ? "https://wa.me/"+tel : "";
+  var tgUrl = tel ? "https://t.me/+"+tel : "";
+  var t     = TABS[tabIdx];
+  var uid   = "p-"+tabIdx+"-"+rowIdx;
+  var search= (p.nombre+" "+p.apellido+" "+p.club+" "+p.correo+" "+p.tel).toLowerCase();
 
-  return '<div class="persona-row" data-search="' + searchStr + '" data-idx="' + idx + '" id="row-' + id + '">' +
+  var compTag = showComp
+    ? '<span class="comp-tag" style="background:'+t.color+'">'+t.label+'</span>'
+    : '';
 
-    '<div class="persona-header" onclick="toggleRow(\'' + id + '\')">' +
-      '<div class="avatar">' + initials(p.nombre, p.apellido) + '</div>' +
+  return '<div class="persona-row" data-search="'+search+'" data-tab="'+tabIdx+'" data-idx="'+rowIdx+'" id="row-'+uid+'">' +
+    '<div class="persona-header" onclick="toggleRow(\''+uid+'\')">' +
+      '<div class="avatar" style="background:linear-gradient(135deg,'+t.color+','+t.color+'cc)">'+initials(p.nombre,p.apellido)+'</div>' +
       '<div class="persona-info">' +
-        '<div class="persona-nombre">' + p.nombre + ' ' + p.apellido + '</div>' +
-        '<span class="club-tag">🏟️ ' + p.club + '</span>' +
+        '<div class="persona-nombre">'+p.nombre+' '+p.apellido+'</div>' +
+        '<div class="persona-meta">' +
+          '<span class="club-tag">🏟️ '+p.club+'</span>' +
+          compTag +
+        '</div>' +
       '</div>' +
       '<span class="chevron">▼</span>' +
     '</div>' +
-
-    '<div class="persona-detail" id="detail-' + id + '">' +
+    '<div class="persona-detail" id="detail-'+uid+'">' +
       (p.correo ?
         '<div class="detail-label">Correo electrónico</div>' +
-        '<div class="detail-value"><a href="mailto:' + p.correo + '" onclick="event.stopPropagation()">' + p.correo + '</a></div>' : '') +
+        '<div class="detail-value"><a href="mailto:'+p.correo+'" onclick="event.stopPropagation()">'+p.correo+'</a></div>' : '') +
       (p.tel ?
         '<div class="detail-label">Celular</div>' +
-        '<div class="detail-value">' + p.tel + '</div>' : '') +
-      (wpUrl || tgUrl ?
+        '<div class="detail-value">'+p.tel+'</div>' : '') +
+      (wpUrl||tgUrl ?
         '<div class="msg-btns">' +
-          (wpUrl ? '<a class="btn-wp" href="' + wpUrl + '" target="_blank" onclick="event.stopPropagation()">💬 WhatsApp</a>' : '') +
-          (tgUrl ? '<a class="btn-tg" href="' + tgUrl + '" target="_blank" onclick="event.stopPropagation()">✈️ Telegram</a>' : '') +
+          (wpUrl ? '<a class="btn-wp" href="'+wpUrl+'" target="_blank" onclick="event.stopPropagation()">💬 WhatsApp</a>' : '') +
+          (tgUrl ? '<a class="btn-tg" href="'+tgUrl+'" target="_blank" onclick="event.stopPropagation()">✈️ Telegram</a>' : '') +
         '</div>' : '') +
-      '<button class="btn-share-contact" onclick="compartirContacto(' + currentTab + ',event)">🔗 Compartir contacto</button>' +
+      '<button class="btn-share-contact" onclick="compartirContacto(event)">🔗 Compartir contacto</button>' +
     '</div>' +
-
   '</div>';
 }
 
-function toggleRow(id) {
-  var header = document.querySelector("#row-" + id + " .persona-header");
-  var detail = document.getElementById("detail-" + id);
+function toggleRow(uid) {
+  var header = document.querySelector("#row-"+uid+" .persona-header");
+  var detail = document.getElementById("detail-"+uid);
   var isOpen = header.classList.contains("open");
   document.querySelectorAll(".persona-header.open").forEach(function(h){ h.classList.remove("open"); });
   document.querySelectorAll(".persona-detail.open").forEach(function(d){ d.classList.remove("open"); });
-  if (!isOpen) {
-    header.classList.add("open");
-    detail.classList.add("open");
-  }
+  if (!isOpen) { header.classList.add("open"); detail.classList.add("open"); }
 }
 
+/* ── RENDER LISTA POR TAB ── */
 function renderLista(tabIdx) {
   var data  = DATA[tabIdx];
-  var lista = document.getElementById("lista-" + tabIdx);
-  var empty = document.getElementById("empty-" + tabIdx);
-  document.getElementById("loading-" + tabIdx).style.display = "none";
+  var lista = document.getElementById("lista-"+tabIdx);
+  var empty = document.getElementById("empty-"+tabIdx);
+  document.getElementById("loading-"+tabIdx).style.display = "none";
   if (!data.length) { lista.style.display="none"; empty.style.display="block"; return; }
-  // guardar tabIdx activo temporalmente para buildRow
-  var prev = currentTab;
-  currentTab = tabIdx;
-  lista.innerHTML = data.map(function(p,i){ return buildRow(p,i); }).join("");
-  currentTab = prev;
+  lista.innerHTML = data.map(function(p,i){ return buildRow(p,tabIdx,i,false); }).join("");
   lista.style.display = "block";
   empty.style.display = "none";
-  document.getElementById("count-" + tabIdx).textContent = data.length;
+  document.getElementById("count-"+tabIdx).textContent = data.length;
   updateBadge();
 }
 
-function updateBadge() {
-  var t = DATA.reduce(function(s,d){ return s + d.length; }, 0);
-  if (t > 0) document.getElementById("totalBadge").textContent = t + " registros";
-}
+/* ── RENDER TODOS (búsqueda global) ── */
+function renderAll(q) {
+  var lista = document.getElementById("lista-all");
+  var empty = document.getElementById("empty-all");
+  var html  = "";
+  var total = 0;
 
-function filterRows() {
-  var q = document.getElementById("searchInput").value.toLowerCase().trim();
-  var lista = document.getElementById("lista-" + currentTab);
-  var empty = document.getElementById("empty-" + currentTab);
-  var rows  = lista.querySelectorAll(".persona-row");
-  var vis = 0;
-  rows.forEach(function(r){
-    var match = !q || r.getAttribute("data-search").indexOf(q) !== -1;
-    r.style.display = match ? "" : "none";
-    if (match) vis++;
+  TABS.forEach(function(t, tabIdx) {
+    var filtered = DATA[tabIdx].filter(function(p){
+      if (!q) return true;
+      return (p.nombre+" "+p.apellido+" "+p.club+" "+p.correo+" "+p.tel).toLowerCase().indexOf(q) !== -1;
+    });
+    if (!filtered.length) return;
+
+    // Separador de competencia
+    html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 18px;background:#f8fafc;border-bottom:1px solid var(--line);">' +
+      '<img src="'+t.logo+'" style="height:24px;width:auto;" onerror="this.style.display=\'none\'">' +
+      '<span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;">'+t.label+'</span>' +
+      '<span style="margin-left:auto;font-size:11px;font-weight:600;color:'+t.color+'">'+filtered.length+'</span>' +
+    '</div>';
+
+    // Buscar índices originales
+    DATA[tabIdx].forEach(function(p, i) {
+      var match = !q || (p.nombre+" "+p.apellido+" "+p.club+" "+p.correo+" "+p.tel).toLowerCase().indexOf(q) !== -1;
+      if (match) { html += buildRow(p, tabIdx, i, false); total++; }
+    });
   });
-  empty.style.display = vis === 0 ? "block" : "none";
+
+  document.getElementById("count-all").textContent = total;
+  if (!html) { lista.style.display="none"; empty.style.display="block"; return; }
+  lista.innerHTML = html;
+  lista.style.display = "block";
+  empty.style.display = "none";
 }
 
-function switchTab(idx) {
-  currentTab = idx;
-  document.querySelectorAll(".tab-btn").forEach(function(b,i){ b.classList.toggle("active", i===idx); });
-  document.querySelectorAll(".tab-panel").forEach(function(p,i){ p.classList.toggle("active", i===idx); });
-  document.getElementById("searchInput").value = "";
-  filterRows();
+/* ── SEARCH ── */
+function onSearch() {
+  var q = document.getElementById("searchInput").value.toLowerCase().trim();
+
+  if (q) {
+    // Activar panel "Todos"
+    document.querySelectorAll(".tab-btn").forEach(function(b){ b.classList.remove("active"); });
+    document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.remove("active"); });
+    document.getElementById("tab-all").classList.add("active");
+    document.getElementById("panel-all").classList.add("active");
+    renderAll(q);
+  } else {
+    // Volver al tab activo
+    document.querySelectorAll(".tab-btn").forEach(function(b){ b.classList.remove("active"); });
+    document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.remove("active"); });
+    document.getElementById("tab-"+activeTab).classList.add("active");
+    document.getElementById("panel-"+activeTab).classList.add("active");
+    activeTab = activeTab; // mantener
+  }
 }
 
-/* ── CARGAR LAS 4 HOJAS EN PARALELO ── */
+function updateBadge() {
+  var t = DATA.reduce(function(s,d){ return s+d.length; },0);
+  if (t > 0) document.getElementById("totalBadge").textContent = t+" registros";
+}
+
+/* ── FETCH ── */
+initUI();
 TABS.forEach(function(tab, idx) {
-  fetch(csvUrl(tab.gid))
+  fetch("https://docs.google.com/spreadsheets/d/e/"+SHEET_ID+"/pub?gid="+tab.gid+"&single=true&output=csv")
     .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); })
     .then(function(text){
       DATA[idx] = parseCSV(text).map(mapRow).filter(function(p){ return p.nombre; });
@@ -356,7 +437,7 @@ TABS.forEach(function(tab, idx) {
     })
     .catch(function(err){
       document.getElementById("loading-"+idx).innerHTML =
-        '<div class="alert-error">⚠️ No se pudo cargar ' + tab.nombre + '. (' + err.message + ')</div>';
+        '<div class="alert-error">⚠️ No se pudo cargar '+tab.label+'. ('+err.message+')</div>';
     });
 });
 </script>
