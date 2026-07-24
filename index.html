@@ -195,6 +195,27 @@ var DATA = TABS.map(function(){ return []; });
 var currentTab = -1; // -1 = "Todos" (solo cuando hay búsqueda activa)
 var activeTab  = 0;
 
+/* ── HISTORIAL NAVEGADOR ── */
+window.addEventListener("popstate", function(e) {
+  if (e.state && e.state.screen === "dir") {
+    showDir(e.state.tab);
+  } else {
+    showHome();
+  }
+});
+
+function showHome() {
+  document.getElementById("homeScreen").style.display = "block";
+  document.getElementById("dirScreen").style.display  = "none";
+  document.getElementById("searchInput").value = "";
+}
+
+function showDir(idx) {
+  document.getElementById("homeScreen").style.display = "none";
+  document.getElementById("dirScreen").style.display  = "block";
+  switchTab(idx);
+}
+
 /* ── HOME ── */
 function renderHome() {
   var grid = document.getElementById("homeGrid");
@@ -214,15 +235,13 @@ function renderHome() {
 }
 
 function goToTab(idx) {
-  document.getElementById("homeScreen").style.display = "none";
-  document.getElementById("dirScreen").style.display  = "block";
-  switchTab(idx);
+  history.pushState({ screen: "dir", tab: idx }, "");
+  showDir(idx);
 }
 
 function goHome() {
-  document.getElementById("homeScreen").style.display = "block";
-  document.getElementById("dirScreen").style.display  = "none";
-  document.getElementById("searchInput").value = "";
+  history.pushState({ screen: "home" }, "");
+  showHome();
 }
 
 /* ── INIT TABS Y PANELES ── */
@@ -413,13 +432,20 @@ function renderLista(tabIdx) {
   var lista = document.getElementById("lista-"+tabIdx);
   var empty = document.getElementById("empty-"+tabIdx);
   document.getElementById("loading-"+tabIdx).style.display = "none";
-  if (!data.length) { lista.style.display="none"; empty.style.display="block"; return; }
+  if (!data.length) {
+    lista.style.display="none";
+    empty.style.display="block";
+    empty.innerHTML='<div class="empty-icon">👤</div>Sin contactos registrados';
+    var hc = document.getElementById("home-count-"+tabIdx);
+    if (hc) hc.textContent = "Sin contactos";
+    return;
+  }
   lista.innerHTML = data.map(function(p,i){ return buildRow(p,tabIdx,i,false); }).join("");
   lista.style.display = "block";
   empty.style.display = "none";
   document.getElementById("count-"+tabIdx).textContent = data.length;
   var hc = document.getElementById("home-count-"+tabIdx);
-  if (hc) hc.textContent = data.length + " registros";
+  if (hc) hc.textContent = data.length + " contactos";
   updateBadge();
 }
 
@@ -481,10 +507,11 @@ function onSearch() {
 
 function updateBadge() {
   var t = DATA.reduce(function(s,d){ return s+d.length; },0);
-  if (t > 0) document.getElementById("totalBadge").textContent = t+" registros";
+  if (t > 0) document.getElementById("totalBadge").textContent = t+" contactos";
 }
 
 /* ── FETCH ── */
+history.replaceState({ screen: "home" }, "");
 renderHome();
 initUI();
 TABS.forEach(function(tab, idx) {
