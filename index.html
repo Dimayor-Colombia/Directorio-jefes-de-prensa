@@ -158,7 +158,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div style="font-size:20px;font-weight:700;color:var(--text);">Jefes de Prensa</div>
       <div style="font-size:14px;color:var(--muted);margin-top:4px;">Selecciona una competencia para ver el directorio</div>
     </div>
-    <div id="homeGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;"></div>
+    <div id="homeGrid" style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;"></div>
   </div>
 </div>
 
@@ -220,7 +220,7 @@ function renderHome() {
   var grid = document.getElementById("homeGrid");
   grid.innerHTML = TABS.map(function(t, i) {
     return '<div onclick="goToTab('+i+')" style="cursor:pointer;background:var(--card);border:1px solid var(--line);' +
-      'border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .2s,transform .2s;"' +
+      'border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .2s,transform .2s;width:180px;"' +
       'onmouseover="this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'var(--shadow)\'"' +
       'onmouseout="this.style.transform=\'\';this.style.boxShadow=\'var(--shadow-sm)\'">' +
         '<div style="height:6px;background:'+t.color+';"></div>' +
